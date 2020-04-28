@@ -28,13 +28,15 @@ int main(int argc, char *argv[]) {
     
     MPI_File fh;
     
-    gol_init_master(population,  Graph,  G_data,  G_resultdata,  Day_of_cure, rank );
+    gol_init_master(population,  Graph,  G_data,  G_resultdata,  Day_of_cure, rank, Num_of_connections_per_person );
     int Result=gol_kernelLaunch( G_data,
                                  G_resultData,
+                                 Graph,
                                  Day_of_cure,
                                  population,
                                  threshold,
-                                threadsCount);
+                                threadsCount,
+                                Num_of_connections_per_person);
     int i;
     if (rank == 0) {
         MPI_File_open(MPI_COMM_SELF, "test.txt",MPI_MODE_CREATE | MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
