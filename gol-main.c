@@ -7,7 +7,8 @@
 
 #define threshold 500000
 #define population 1000000
-#define recovery_period 5 
+#define recovery_period 5
+#define max_connections 5
 
 //the indexes of infected people
 unsigned int* G_data=NULL;
@@ -31,7 +32,7 @@ int main(int argc, char *argv[]) {
     
     int threadsCount = atoi(argv[1]);
     
-    gol_init_master(population,  Graph,  G_data,  G_resultdata,  Day_of_cure, rank, Num_of_connections_per_person, threadsCount );
+    gol_init_master(population,  Graph,  G_data,  G_resultdata,  Day_of_cure, rank, Num_of_connections_per_person, threadsCount, max_connections );
     int Result=gol_kernelLaunch( &G_data,
                                  &G_resultData,
                                  &Graph,
