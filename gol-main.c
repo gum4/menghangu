@@ -5,16 +5,17 @@
 #include "mpi.h"
 #include <string.h>
 
-
 #define threshold 500000
 #define population 1000000
+#define recovery_period 5 
 
 //the indexes of infected people
 unsigned int* G_data=NULL;
 //the indexes of infected people in the next round
 unsigned int* G_resultdata=NULL;
 unsigned int** Graph;
-unsigned int** Day_of_cure;
+unsigned int* Day_of_cure;
+unsigned int* Num_of_connections_per_person;
 
 
 int main(int argc, char *argv[]) {
@@ -26,17 +27,21 @@ int main(int argc, char *argv[]) {
     MPI_Get_processor_name(processor_name,&namelen);
     MPI_Status status;
     
-    MPI_File fh;
+    MPI_File fh;  
     
-    gol_init_master(population,  Graph,  G_data,  G_resultdata,  Day_of_cure, rank, Num_of_connections_per_person );
-    int Result=gol_kernelLaunch( G_data,
-                                 G_resultData,
-                                 Graph,
-                                 Day_of_cure,
+    int threadsCount = atoi(argv[1]);
+    
+    gol_init_master(population,  Graph,  G_data,  G_resultdata,  Day_of_cure, rank, Num_of_connections_per_person, threadsCount );
+    int Result=gol_kernelLaunch( &G_data,
+                                 &G_resultData,
+                                 &Graph,
+                                 &Day_of_cure,
                                  population,
                                  threshold,
-                                threadsCount,
-                                Num_of_connections_per_person);
+                                 threadsCount,
+                                 &Num_of_connections_per_person,
+                                 recovery_period
+                                );
     int i;
     if (rank == 0) {
         MPI_File_open(MPI_COMM_SELF, "test.txt",MPI_MODE_CREATE | MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
